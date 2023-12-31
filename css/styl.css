@@ -1,0 +1,349 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    position: relative;
+}
+
+html {
+    scroll-behavior: smooth;
+
+}
+
+.navbar {
+    background-color: #ffffff93;
+   
+}
+
+/* .title-carou{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+} */
+.ligne{
+   width: 100px;
+   height: 2px;
+   background-color: #a2356d;
+   margin-left: auto;
+   margin-right: auto;
+   margin-bottom: 20px;
+   
+ 
+}
+
+.visually-hidden {
+    display: none;
+
+}
+
+.w-100 {
+    height: 100vh
+
+}
+
+.carousel-item {
+    height: 100vh;
+    min-height: 300px;    
+
+}
+.carousel-caption {
+    bottom: 220px;
+    z-index: 2;
+    justify-content: center;
+
+}
+.carousel-caption h5 {
+
+    font-size: 45px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 25px;
+}
+.carousel-caption p {
+    width: 60%;
+    margin: auto;
+    font-size: 18px;
+    line-height: 1.9;
+
+}
+.carousel-inner::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1 ;
+}
+.navbar-light .navbar-brand {
+    color: #000;
+    font-size: 25px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+
+/***************/
+
+/* Centered heading */
+.text-center {
+    text-align: center;
+}
+
+/* Service card */
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.card-image {
+    object-fit: cover;
+    height: 300px;
+    width: 100%;
+}
+/* .card-image {
+    height: 200px;
+    object-fit: cover;
+} */
+
+.card-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 16px;
+    color: #777;
+}
+/***************/
+/* .caro1 {
+    width: 100%;
+    min-height: 100vh;
+    background: url("img_1.JPG") top center;
+    background-size: cover;
+    position: relative;
+    padding: 120px 0;
+   
+    
+}
+.caro2 {
+    width: 100%;
+    min-height: 100vh;
+    background: url("img_2.JPG") top center;
+    background-size: cover;
+    position: relative;
+    padding: 120px 0;
+    
+    
+}
+.caro3 {
+    width: 100%;
+    min-height: 100vh;
+    background: url("img_3.JPG") top center;
+    background-size: cover;
+    position: relative;
+    padding: 120px 0;
+    
+    
+} */
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .carousel-caption{
+        bottom: 370px;
+    }
+    .carousel-caption p {
+        width: 100%;
+
+    }
+}
+
+
+@media only screen and (max-width : 767px) {
+
+    .navbar-nav {
+        text-align: center;
+    }
+    .carousel-caption {
+        bottom: 125px;
+    }
+    .carousel-caption h5 {
+        font-size: 17px;
+    }
+    .carousel-caption a {
+        padding: 10px 15px;
+    }
+    .carousel-caption p {
+        width: 100%;
+        line-height: 1.6;
+        font-size: 12px;
+    }
+
+}
+
+
+/* footer */
+
+.footer {
+    font-size: 14px;
+    box-shadow: #505974;
+    }
+    
+    .footer .footer-content {
+    background-color: rgba(150, 157, 177, 0.7);
+    background-size: contain;
+    padding: 60px 0 30px 0;
+    }
+    
+    .footer .footer-content .footer-info {
+    margin-bottom: 30px;
+    }
+    
+    .footer .footer-content .footer-info .logo {
+    line-height: 0;
+    margin-bottom: 25px;
+    }
+    
+    .footer .footer-content .footer-info .logo img {
+    max-height: 40px;
+    margin-right: 6px;
+    }
+    
+    .footer .footer-content .footer-info .logo span {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #505974;
+    margin-top: 3px;
+    }
+    
+    .footer .footer-content .footer-info p {
+    font-size: 15px;
+    margin-bottom: 0;
+    font-family: 'Aptos Narrow';
+    color: #505974
+    }
+    
+    .footer .footer-content .social-links a {
+    font-size: 14px;
+    line-height: 0;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    color: rgba(27, 47, 69, 0.5);
+    margin-right: 10px;
+    transition: 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #505974;
+    color: #fff;
+    border-radius: 50px;
+    }
+    
+    .footer .footer-content .social-links a:hover {
+    background-color:#637098;
+    }
+    
+    .footer .footer-content h4 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #505974;
+    position: relative;
+    padding-bottom: 12px;
+    }
+    
+    .footer .footer-content .footer-links {
+    margin-bottom: 30px;
+    }
+    
+    .footer .footer-content .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    }
+    
+    .footer .footer-content .footer-links ul i {
+    margin-right: 2px;
+    color: #343e5b;
+    font-size: 16px;
+    line-height: 0;
+    }
+    
+    .footer .footer-content .footer-links ul li {
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    }
+    
+    
+    .footer .footer-content .footer-links ul li:first-child {
+    padding-top: 0;
+    
+    }
+    
+    .footer .footer-content .footer-links ul a {
+    color:#343e5b;
+    font-size: 15px;
+    transition: 0.3s;
+    display: inline-block;
+    line-height: 1;
+    text-decoration: none;
+    
+    }
+    
+    .footer .footer-content .footer-links ul a:hover {
+    color: #6f4147;
+    }
+    
+    .footer .footer-content .footer-contact p {
+    line-height: 26px;
+    color: #505974;
+    font-size: 15px;
+    }
+
+
+/*--------------------------------------------------------------
+# Scroll top button
+--------------------------------------------------------------*/
+.scroll-top {
+    position: fixed;
+    visibility: hidden;
+    opacity: 0;
+    right: 15px;
+    bottom: 15px;
+    z-index: 99999;
+    background: #505974;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    transition: all 0.4s;
+    }
+    
+    .scroll-top i {
+    font-size: 24px;
+    color: #fff;
+    line-height: 0;
+    }
+    
+    .scroll-top:hover {
+    background: #a2356d;
+    color: #fff;
+    }
+    
+    .scroll-top.active {
+    visibility: visible;
+    opacity: 1;
+    }
+    
