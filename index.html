@@ -1,261 +1,303 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collège Horizon — Gestion d’école</title>
+    <meta
+      name="description"
+      content="Petit site statique en français pour gérer un collège : tableau de bord, classes, élèves et emploi du temps."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --panel-alt: #edf3fb;
+        --text: #163049;
+        --muted: #5f748b;
+        --accent: #2457ff;
+        --accent-2: #14b8a6;
+        --border: #dbe4ef;
+        --shadow: 0 14px 35px rgba(22, 48, 73, 0.08);
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, sans-serif;
+        color: var(--text);
+        background: linear-gradient(180deg, #fbfdff 0%, var(--bg) 100%);
+      }
+      a { color: inherit; text-decoration: none; }
+      .container { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; }
+      .topbar {
+        position: sticky; top: 0; z-index: 20;
+        background: rgba(255,255,255,.88); backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(219,228,239,.9);
+      }
+      .topbar__inner {
+        display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem 0;
+      }
+      .brand { font-weight:800; font-size:1.2rem; }
+      .subtitle { margin:.25rem 0 0; color:var(--muted); font-size:.95rem; }
+      .nav { display:flex; gap:1rem; flex-wrap:wrap; }
+      .nav a { color:var(--muted); font-weight:600; }
+      .menu-btn {
+        display:none; border:1px solid var(--border); background:var(--panel);
+        border-radius:.8rem; padding:.7rem 1rem;
+      }
+      .hero { padding:2.5rem 0 1.5rem; }
+      .hero__grid { display:grid; grid-template-columns:1.6fr .9fr; gap:1rem; }
+      .hero__content, .hero__panel, .stat-card, .info-card, .schedule-card, .footer-box, .table-wrap, .filter-bar {
+        background:var(--panel); border:1px solid var(--border); border-radius:1.2rem; box-shadow:var(--shadow);
+      }
+      .hero__content, .hero__panel, .footer-box { padding:1.4rem; }
+      .pill, .section__kicker, .schedule-card__day {
+        display:inline-flex; align-items:center; width:fit-content; border-radius:999px;
+        padding:.35rem .7rem; font-size:.78rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+      }
+      .pill, .section__kicker { background:rgba(36,87,255,.1); color:var(--accent); }
+      .hero h1, .section h2 { margin:.8rem 0 0; line-height:1.1; }
+      .hero h1 { font-size:clamp(2rem, 4vw, 3.6rem); }
+      .hero p, .footer-box p, .stat-card__note, .info-card p, .schedule-card p, .schedule-card small, .table-hint { color:var(--muted); line-height:1.65; }
+      .hero__actions { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1.2rem; }
+      .btn {
+        display:inline-flex; align-items:center; justify-content:center; border-radius:.9rem; padding:.95rem 1.15rem;
+        font-weight:700; border:1px solid transparent;
+      }
+      .btn--primary { background:var(--accent); color:white; }
+      .btn--ghost { background:transparent; border-color:var(--border); }
+      .hero__panel h2 { margin-top:0; }
+      .hero__panel ul, .footer-box__tips ul { padding-left:1.2rem; color:var(--muted); }
+      .section { padding:1.5rem 0; }
+      .section--alt { background:rgba(255,255,255,.45); }
+      .section__head { margin-bottom:1rem; }
+      .stats, .cards, .schedule { display:grid; gap:1rem; }
+      .stats { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .stat-card, .info-card, .schedule-card { padding:1.2rem; }
+      .stat-card__value { font-size:2rem; font-weight:800; }
+      .stat-card__label, .info-card h3, .schedule-card h3 { margin-top:.4rem; }
+      .cards { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .filter-bar {
+        display:flex; gap:.8rem; flex-wrap:wrap; padding:1rem; margin-bottom:1rem;
+      }
+      .filter-bar input, .filter-bar select {
+        border:1px solid var(--border); border-radius:.9rem; padding:.9rem 1rem; font:inherit; background:white; min-width:240px;
+      }
+      .table-wrap { overflow:auto; }
+      table { width:100%; border-collapse:collapse; }
+      th, td { padding:1rem; border-bottom:1px solid var(--border); text-align:left; }
+      th { background:var(--panel-alt); }
+      .empty { text-align:center; color:var(--muted); }
+      .schedule { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .schedule-card__day { background:rgba(20,184,166,.1); color:var(--accent-2); }
+      .footer-box { display:grid; grid-template-columns:1.1fr .9fr; gap:1rem; }
+      @media (max-width: 920px) {
+        .hero__grid, .stats, .cards, .schedule, .footer-box { grid-template-columns:1fr 1fr; }
+      }
+      @media (max-width: 760px) {
+        .menu-btn { display:inline-flex; }
+        .nav { display:none; width:100%; flex-direction:column; padding-top:.8rem; }
+        .nav.is-open { display:flex; }
+        .topbar__inner { flex-wrap:wrap; }
+        .hero__grid, .stats, .cards, .schedule, .footer-box { grid-template-columns:1fr; }
+        .filter-bar input, .filter-bar select { min-width:100%; width:100%; }
+      }
+    </style>
+    <script>
+      // Le JavaScript reste léger : menu mobile + filtre des élèves.
+      window.addEventListener('DOMContentLoaded', () => {
+        const menuButton = document.querySelector('.menu-btn');
+        const navigation = document.querySelector('.nav');
+        const searchInput = document.getElementById('searchInput');
+        const classFilter = document.getElementById('classFilter');
+        const resetFilters = document.getElementById('resetFilters');
+        const rows = Array.from(document.querySelectorAll('#studentsTable tr'));
+        const visibleCount = document.getElementById('visibleCount');
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entreprise de Sérigraphie</title>
-    <!-- Inclure Bootstrap CSS -->
-    <link href="css/styl.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link href="bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="aos/aos.css" rel="stylesheet">
-</head>
+        const updateRows = () => {
+          const search = searchInput.value.trim().toLowerCase();
+          const selectedClass = classFilter.value;
+          let count = 0;
 
-<body>
-    <!-- Barre de navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light border border-bottom-4 fixed-top" style="background-color: #505974;"  data-aos="fade-up" data-aos-delay="500">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="Images/logo.png" class="img-fluid" style=" max-height: 50px;
-                margin-left: 80px;" alt="">
-            </a>
-          <button class="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse " id="navbarNav" >
-            <ul class="navbar-nav ms-4 mb-2 ">
-              <li class="nav-item ">
-                <a class="nav-link active text-white" aria-current="page" href="#">Accueil</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link text-white" href="#about">A propos de nous</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link text-white" href="#service">Services</a>
-              </li>
+          rows.forEach((row) => {
+            const name = row.dataset.nom || '';
+            const schoolClass = row.dataset.classe || '';
+            const matchesSearch = !search || name.includes(search) || schoolClass.toLowerCase().includes(search);
+            const matchesClass = selectedClass === 'Toutes' || schoolClass === selectedClass;
+            const show = matchesSearch && matchesClass;
+            row.style.display = show ? '' : 'none';
+            if (show) count += 1;
+          });
 
-              <li class="nav-item">
-                <a class="nav-link text-white" href="#footer">Contactez-nous</a>
-              </li>
+          visibleCount.textContent = String(count);
+        };
+
+        if (menuButton && navigation) {
+          menuButton.addEventListener('click', () => {
+            const isOpen = navigation.classList.toggle('is-open');
+            menuButton.setAttribute('aria-expanded', String(isOpen));
+          });
+        }
+
+        searchInput.addEventListener('input', updateRows);
+        classFilter.addEventListener('change', updateRows);
+        resetFilters.addEventListener('click', () => {
+          searchInput.value = '';
+          classFilter.value = 'Toutes';
+          updateRows();
+        });
+
+        updateRows();
+      });
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div>
+          <span class="brand">Collège Horizon</span>
+          <p class="subtitle">Site statique de gestion scolaire — simple et lisible</p>
+        </div>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+        <nav id="nav" class="nav">
+          <a href="#tableau">Tableau de bord</a>
+          <a href="#classes">Classes</a>
+          <a href="#eleves">Élèves</a>
+          <a href="#emploi">Emploi du temps</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero__grid">
+          <div class="hero__content">
+            <span class="pill">Version statique GitHub Pages</span>
+            <h1>Un petit site en français pour suivre la vie du collège</h1>
+            <p>Cette version remplace l'ancien site du dépôt par une maquette simple : tableau de bord, classes, élèves et emploi du temps.</p>
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="#eleves">Voir les élèves</a>
+              <a class="btn btn--ghost" href="#classes">Voir les classes</a>
+            </div>
+          </div>
+          <aside class="hero__panel">
+            <h2>Infos rapides</h2>
+            <ul>
+              <li>Année scolaire : 2025 - 2026</li>
+              <li>Cycle : 6e à 3e</li>
+              <li>Langue : français</li>
+              <li>Adapté à GitHub Pages</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section id="tableau" class="section">
+        <div class="container">
+          <div class="section__head">
+            <span class="section__kicker">Tableau de bord</span>
+            <h2>Les chiffres du collège</h2>
+          </div>
+          <div class="stats">
+            <article class="stat-card"><div class="stat-card__value">486</div><div class="stat-card__label">Élèves</div><div class="stat-card__note">+ 12 cette semaine</div></article>
+            <article class="stat-card"><div class="stat-card__value">12</div><div class="stat-card__label">Classes</div><div class="stat-card__note">de la 6e à la 3e</div></article>
+            <article class="stat-card"><div class="stat-card__value">24</div><div class="stat-card__label">Enseignants</div><div class="stat-card__note">toutes disciplines</div></article>
+            <article class="stat-card"><div class="stat-card__value">94%</div><div class="stat-card__label">Présence</div><div class="stat-card__note">moyenne du jour</div></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="classes" class="section section--alt">
+        <div class="container">
+          <div class="section__head">
+            <span class="section__kicker">Classes</span>
+            <h2>Organisation des classes</h2>
+          </div>
+          <div class="cards">
+            <article class="info-card"><h3>6e A</h3><p><strong>Effectif :</strong> 40 élèves</p><p><strong>Prof principal :</strong> Mme Akakpo</p><p><strong>Salle :</strong> Salle 01</p></article>
+            <article class="info-card"><h3>5e B</h3><p><strong>Effectif :</strong> 38 élèves</p><p><strong>Prof principal :</strong> M. Mensah</p><p><strong>Salle :</strong> Salle 02</p></article>
+            <article class="info-card"><h3>4e C</h3><p><strong>Effectif :</strong> 36 élèves</p><p><strong>Prof principal :</strong> Mme Dossou</p><p><strong>Salle :</strong> Salle 03</p></article>
+            <article class="info-card"><h3>3e D</h3><p><strong>Effectif :</strong> 42 élèves</p><p><strong>Prof principal :</strong> M. Koffi</p><p><strong>Salle :</strong> Salle 04</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="eleves" class="section">
+        <div class="container">
+          <div class="section__head">
+            <span class="section__kicker">Élèves</span>
+            <h2>Suivi des élèves</h2>
+          </div>
+          <form class="filter-bar" onsubmit="return false;">
+            <input id="searchInput" type="search" placeholder="Rechercher un élève ou une classe" aria-label="Rechercher un élève" />
+            <select id="classFilter" aria-label="Filtrer par classe">
+              <option value="Toutes">Toutes</option>
+              <option value="6e A">6e A</option>
+              <option value="5e B">5e B</option>
+              <option value="4e C">4e C</option>
+              <option value="3e D">3e D</option>
+            </select>
+            <button class="btn btn--primary" type="button" id="resetFilters">Réinitialiser</button>
+          </form>
+          <p class="table-hint"><span id="visibleCount">6</span> élève(s) affiché(s)</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Nom</th><th>Classe</th><th>Moyenne</th><th>Statut</th></tr>
+              </thead>
+              <tbody id="studentsTable">
+                <tr data-nom="afi k." data-classe="6e A"><td>Afi K.</td><td>6e A</td><td>14,2/20</td><td>Bonne progression</td></tr>
+                <tr data-nom="kossi a." data-classe="5e B"><td>Kossi A.</td><td>5e B</td><td>12,8/20</td><td>À suivre</td></tr>
+                <tr data-nom="mariam s." data-classe="4e C"><td>Mariam S.</td><td>4e C</td><td>15,6/20</td><td>Excellent</td></tr>
+                <tr data-nom="yao t." data-classe="3e D"><td>Yao T.</td><td>3e D</td><td>10,9/20</td><td>Besoin d’accompagnement</td></tr>
+                <tr data-nom="fatou b." data-classe="6e A"><td>Fatou B.</td><td>6e A</td><td>13,4/20</td><td>Régulier</td></tr>
+                <tr data-nom="junior e." data-classe="5e B"><td>Junior E.</td><td>5e B</td><td>16,1/20</td><td>Excellent</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="emploi" class="section section--alt">
+        <div class="container">
+          <div class="section__head">
+            <span class="section__kicker">Emploi du temps</span>
+            <h2>Planning simplifié</h2>
+          </div>
+          <div class="schedule">
+            <article class="schedule-card"><span class="schedule-card__day">Lundi</span><h3>Mathématiques</h3><p>08:00 - 10:00</p><small>6e A</small></article>
+            <article class="schedule-card"><span class="schedule-card__day">Mardi</span><h3>Français</h3><p>10:15 - 12:15</p><small>5e B</small></article>
+            <article class="schedule-card"><span class="schedule-card__day">Mercredi</span><h3>SVT</h3><p>13:00 - 15:00</p><small>4e C</small></article>
+            <article class="schedule-card"><span class="schedule-card__day">Jeudi</span><h3>Histoire-Géo</h3><p>08:00 - 10:00</p><small>3e D</small></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container footer-box">
+          <div>
+            <span class="section__kicker">À personnaliser</span>
+            <h2>Tu peux adapter ce mini-site très facilement</h2>
+            <p>Change les noms, les classes, les élèves et les notes. Ce site est statique, donc il fonctionne directement sur GitHub Pages.</p>
+          </div>
+          <div class="footer-box__tips">
+            <strong>Ce que fait le site :</strong>
+            <ul>
+              <li>affiche des données en HTML</li>
+              <li>filtre les élèves avec JavaScript</li>
+              <li>garde un design simple et propre</li>
+              <li>se déploie sans PHP</li>
             </ul>
           </div>
         </div>
-      </nav>
-    
-
-    <!-- Section Accueil -->
-    
-
-    <!-- CAROUSEL -->
-
-    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel"  data-aos="fade-up" data-aos-delay="500">
-        <div class="carousel-indicators">
-          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
-        <div class="carousel-inner">
-          <div class="carousel-item active caro1">
-            <img src="Images/img_1.JPG" class="d-block w-100 caro" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-              <h5 class="title-carou">Formation en informatique</h5>
-              <p>Nous vous formons</p>
-            </div>
-          </div>
-          <div class="carousel-item caro2">
-            <img src="Images/img_2.JPG" class="d-block w-100 caro" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-              <h5 class="title-carou">Serigraphie</h5>
-              <p>Mettez tous ce que vous voulez sur vos habits et maillots</p>
-            </div>
-          </div>
-          <div class="carousel-item caro3">
-            <img src="Images/img_3.JPG" class="d-block w-100 caro" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-              <h5 class="title-carou">Photocopie et saisie</h5>
-              <p></p>
-            </div>
-          </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
-    
-    <!-- Section A propos -->
-    <section id="about" class="about section-padding mt-4">
-        <div class="container">
-            <h2 class="text-center tete " style="color: #a2356d;"  data-aos="fade-up" data-aos-delay="500">A propos de nous</h2>
-            <div class="ligne"  data-aos="fade-up" data-aos-delay="500"><span></span></div>
-            <div class="row">
-                <div class="col-lg-4 col-md-12 col 12" data-aos="fade-up" data-aos-delay="500">
-                    <div class="about-img">
-                        <img src="Images/shirt2.jpg" alt="" class="img-fluid">
-                    </div>
-                </div>
-                <div class="col-lg-8 col-md-12 col-12 ps-lg-5 mt-md-5" data-aos="fade-up" data-aos-delay="500">
-                    <div class="about-text">
-                        <h2>Nous sommes les bests</h2>
-                        <p style="font-size: 24px;">Chez Promise-Info, nous sommes bien plus qu'une entreprise de services graphiques. Nous sommes une équipe passionnée dédiée à donner vie à vos idées. Depuis notre création, nous avons évolué pour devenir un guichet unique offrant une gamme complète de services allant de la sérigraphie à la saisie, en passant par la photocopie, le montage vidéo et même le shooting professionnel.</p>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-
-    <!-- Section Nos Services -->
-    
-
-    <div class="container">
-        <h2 id="service" class="text-center tete"  style="color: #a2356d;" data-aos="fade-up" data-aos-delay="500">Nos Services</h2>
-        <div class="ligne"  data-aos="fade-up" data-aos-delay="500"><span></span></div>
-        <div class="row ">
-            <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="500">
-                <div class="card">
-                    <img src="Images/photo1.jpg" class="card-img-top card-image" alt="Service 1" >
-                    <div class="card-body">
-                        <h5 class="card-title">Photographie</h5>
-                        <!-- <p class="card-text">Description of service 1.</p> -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="500">
-                <div class="card">
-                    <img src="Images/seri2.jpg" class="card-img-top card-image" alt="Service 2" >
-                    <div class="card-body">
-                        <h5 class="card-title">Serigraphie</h5>
-                        <!-- <p class="card-text">Description of service 2.</p> -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="500">
-                <div class="card">
-                    <img src="Images/formation2.jpg" class="card-img-top card-image" alt="Service 3" >
-                    <div class="card-body">
-                        <h5 class="card-title">Maquette</h5>
-                        <!-- <p class="card-text">Description of service 3.</p> -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="500">
-                <div class="card">
-                    <img src="Images/copie1.jpg" class="card-img-top card-image" alt="Service 4" >
-                    <div class="card-body">
-                        <h5 class="card-title">Photocopie & saisie</h5>
-                        <!-- <p class="card-text">Description of service 4.</p> -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="500">
-                <div class="card">
-                    <img src="Images/formation1.jpg" class="card-img-top card-image" alt="Service 5" >
-                    <div class="card-body">
-                        <h5 class="card-title">Formation en informatique</h5>
-                        <!-- <p class="card-text">Description of service 5.</p> -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="500">
-                <div class="card">
-                    <img src="Images/montage.jpg" class="card-img-top card-image" alt="Service 5" >
-                    <div class="card-body">
-                        <h5 class="card-title">Montage video</h5>
-                        <!-- <p class="card-text">Description of service 5.</p> -->
-                    </div>
-                </div>
-            </div>
-        
-        
-        </div>
-    </div>
-
-    <!-- Section Portfolio -->
-    <section id="portfolio" class="py-5">
-        <div class="container"  data-aos="fade-up" data-aos-delay="500">
-            <h2 class="text-center tete"  style="color: #a2356d;">Contactez-nous</h2>
-            
-        </div>
-        <div class="ligne"  data-aos="fade-up" data-aos-delay="500"><span></span></div>
-    </section>
-
-
-    <!-- Pied de page -->
-    <footer id="footer" class="footer">
-        <div id="footer"  class="footer-content">
-            <div class="container">
-              <div class="row gy-4">
-                <div class="col-lg-5 col-md-12 footer-info" data-aos="fade-up" data-aos-delay="500">
-                  <a href="#" class="logo d-flex align-items-center" style="text-decoration: none;">
-                    <img src="Images/logo.png" class="img-fluid" style=" max-height: 50px;
-                margin-left: 80px;" alt="">
-                    <span >PROMISE INFO</span>
-                  </a>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda commodi quam obcaecati voluptas consequuntur enim alias consequatur officia minima autem.</p>
-                  <div class="social-links d-flex  mt-3">
-                    <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-                  </div>
-                </div>
-      
-                <div class="col-lg-2 col-6 footer-links" data-aos="fade-up" data-aos-delay="500">
-                  <h4>Useful Links</h4>
-                  <ul>
-                    <li><i class="bi bi-dash"></i> <a href="#">Accueil</a></li>
-                    <li><i class="bi bi-dash"></i> <a href="#about">A propos de nous</a></li>
-                    <li><i class="bi bi-dash"></i> <a href="#service">Nos Services</a></li>
-                  </ul>
-                </div>
-      
-                <div class="col-lg-2 col-6 footer-links" data-aos="fade-up" data-aos-delay="500">
-                  <h4>Nos Services</h4>
-                  <ul>
-                    <li><i class="bi bi-dash"></i> <a href="#">Photographie </a></li>
-                    <li><i class="bi bi-dash"></i> <a href="#">Serigraphie</a></li>
-                    <li><i class="bi bi-dash"></i> <a href="#">Maquette</a></li>
-                    <li><i class="bi bi-dash"></i> <a href="#">Photcopie & Saisie</a></li>
-                    <li><i class="bi bi-dash"></i> <a href="#">formation en informatique</a></li>
-                    <li><i class="bi bi-dash"></i> <a href="#">Montage video</a></li>
-                   
-      
-                  </ul>
-                </div>
-                <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start" data-aos="fade-up" data-aos-delay="500">
-                  <h4>Contactez Nous</h4>
-                  <p>
-                    Aveta <br>
-                    A Cote de l"ecole Avenir<br>
-                    <br><br>
-                    <strong>Phone:</strong> +228 99 22 29 66<br>
-                    <strong>Email:</strong><a href="mailto:gb.brice6@gmail.com">gb.brice6@gmail.com</a><br>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-     
-    </footer>
-   <div class=" bg-dark text-white text-center">
-            <p>&copy; 2024 PROMIS INFO. Tous droits réservés.</p>
-
-        </div>
-  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-    <script src="js/bootstrap.min.js"></script>
-    <script src="aos/aos.js"></script>
-    <script src="js/main.js"></script>
-
-
-</body>
-
+      </section>
+    </main>
+  </body>
 </html>
